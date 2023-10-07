@@ -177,14 +177,14 @@ const TableList: React.FC = () => {
             setCurrentRow(record);
           }}
         >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
+          <FormattedMessage id="pages.searchTable.update" defaultMessage="Configuration" />
         </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.searchTable.subscribeAlert"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
+        // <a key="subscribeAlert" href="https://procomponents.ant.design/">
+        //   <FormattedMessage
+        //     id="pages.searchTable.subscribeAlert"
+        //     defaultMessage="Subscribe to alerts"
+        //   />
+        // </a>,
       ],
     },
   ];
@@ -217,14 +217,20 @@ const TableList: React.FC = () => {
           sort: Record<string, SortOrder>,
           filter: Record<string, (string | number)[] | null>,
         ) => {
-          const res = await listInterfaceInfoByPageUsingGET({
+          const res: any = await listInterfaceInfoByPageUsingGET({
             ...params,
           });
           if (res?.data) {
             return {
               data: res?.data.records || [],
               success: true,
-              total: res.data.total,
+              total: res?.data.total || 0,
+            };
+          } else {
+            return {
+              data: [],
+              success: false,
+              total: 0,
             };
           }
         }}
