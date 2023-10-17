@@ -4,8 +4,22 @@ import { request } from '@umijs/max';
 
 /** addInterfaceInfo POST /api/interfaceInfo/add */
 export async function addInterfaceInfoUsingPOST(
-  body: API.InterfaceInfoAddRequest,
-  options?: { [key: string]: any },
+  body: {
+    method?: string;
+    isDelete?: number;
+    responseHeader?: string;
+    description?: string;
+    requestParams?: string;
+    updateTime?: string;
+    userId?: number;
+    url?: string;
+    createTime?: string;
+    name?: string;
+    requestHeader?: string;
+    id?: number;
+    status?: number;
+  },
+  options?: { [p: string]: any },
 ) {
   return request<API.BaseResponselong>('/api/interfaceInfo/add', {
     method: 'POST',
