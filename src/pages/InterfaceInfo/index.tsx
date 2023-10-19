@@ -1,7 +1,7 @@
 import CreateModal from '@/pages/InterfaceInfo/components/CreateModal';
-import { removeRule } from '@/services/ant-design-pro/api';
 import {
   addInterfaceInfoUsingPOST,
+  deleteInterfaceInfoUsingPOST,
   listInterfaceInfoByPageUsingGET,
   updateInterfaceInfoUsingPOST,
 } from '@/services/ferry-api-backend/interfaceInfoController';
@@ -18,29 +18,6 @@ import { Button, Drawer, message } from 'antd';
 import { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
 import UpdateModal from './components/UpdateModal';
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
-};
 
 const TableList: React.FC = () => {
   /**
@@ -101,6 +78,31 @@ const TableList: React.FC = () => {
     } catch (error: any) {
       hide();
       message.error('操作失败' + error.message);
+      return false;
+    }
+  };
+
+  /**
+   *  Delete node
+   * @zh-CN 删除节点
+   *
+   * @param record
+   */
+  const handleRemove = async (record: API.InterfaceInfo) => {
+    const hide = message.loading('正在删除');
+    if (!record) return true;
+    try {
+      await deleteInterfaceInfoUsingPOST({
+        id: record.id,
+      });
+      hide();
+      message.success('删除成功');
+      //刷新页面
+      actionRef.current?.reload();
+      return true;
+    } catch (error: any) {
+      hide();
+      message.error('删除失败' + error.message);
       return false;
     }
   };
@@ -190,12 +192,14 @@ const TableList: React.FC = () => {
         >
           <FormattedMessage id="pages.searchTable.update" defaultMessage="Configuration" />
         </a>,
-        // <a key="subscribeAlert" href="https://procomponents.ant.design/">
-        //   <FormattedMessage
-        //     id="pages.searchTable.subscribeAlert"
-        //     defaultMessage="Subscribe to alerts"
-        //   />
-        // </a>,
+        <a
+          key="config"
+          onClick={() => {
+            handleRemove(record);
+          }}
+        >
+          <FormattedMessage id="pages.searchTable.delete" defaultMessage="Configuration" />
+        </a>,
       ],
     },
   ];
@@ -225,8 +229,6 @@ const TableList: React.FC = () => {
         ]}
         request={async (
           params,
-          sort: Record<string, SortOrder>,
-          filter: Record<string, (string | number)[] | null>,
         ) => {
           const res: any = await listInterfaceInfoByPageUsingGET({
             ...params,
