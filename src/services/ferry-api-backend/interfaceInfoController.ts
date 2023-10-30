@@ -4,22 +4,8 @@ import { request } from '@umijs/max';
 
 /** addInterfaceInfo POST /api/interfaceInfo/add */
 export async function addInterfaceInfoUsingPOST(
-  body: {
-    method?: string;
-    isDelete?: number;
-    responseHeader?: string;
-    description?: string;
-    requestParams?: string;
-    updateTime?: string;
-    userId?: number;
-    url?: string;
-    createTime?: string;
-    name?: string;
-    requestHeader?: string;
-    id?: number;
-    status?: number;
-  },
-  options?: { [p: string]: any },
+  body: API.InterfaceInfoAddRequest,
+  options?: { [key: string]: any },
 ) {
   return request<API.BaseResponselong>('/api/interfaceInfo/add', {
     method: 'POST',
@@ -87,6 +73,36 @@ export async function listInterfaceInfoByPageUsingGET(
     params: {
       ...params,
     },
+    ...(options || {}),
+  });
+}
+
+/** offlineInterfaceInfo POST /api/interfaceInfo/offline */
+export async function offlineInterfaceInfoUsingPOST(
+  body: API.RestIdParam,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseboolean>('/api/interfaceInfo/offline', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** onlineInterfaceInfo POST /api/interfaceInfo/online */
+export async function onlineInterfaceInfoUsingPOST(
+  body: API.RestIdParam,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseboolean>('/api/interfaceInfo/online', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }

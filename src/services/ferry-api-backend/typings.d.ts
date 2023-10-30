@@ -396,6 +396,10 @@ declare namespace API {
     reviewStatus?: number;
   };
 
+  type RestIdParam = {
+    id: number;
+  };
+
   type User = {
     createTime?: string;
     gender?: number;

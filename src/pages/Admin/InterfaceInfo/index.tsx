@@ -1,8 +1,10 @@
-import CreateModal from '@/pages/InterfaceInfo/components/CreateModal';
+import CreateModal from '@/pages/Admin/InterfaceInfo/components/CreateModal';
 import {
   addInterfaceInfoUsingPOST,
   deleteInterfaceInfoUsingPOST,
   listInterfaceInfoByPageUsingGET,
+  offlineInterfaceInfoUsingPOST,
+  onlineInterfaceInfoUsingPOST,
   updateInterfaceInfoUsingPOST,
 } from '@/services/ferry-api-backend/interfaceInfoController';
 import { PlusOutlined } from '@ant-design/icons';
@@ -15,7 +17,6 @@ import {
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { Button, Drawer, message } from 'antd';
-import { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
 import UpdateModal from './components/UpdateModal';
 
@@ -108,6 +109,54 @@ const TableList: React.FC = () => {
   };
 
   /**
+   *  发布接口
+   *
+   * @param record
+   */
+  const handleOnline = async (record: API.InterfaceInfo) => {
+    const hide = message.loading('发布中');
+    if (!record) return true;
+    try {
+      await onlineInterfaceInfoUsingPOST({
+        id: record.id,
+      });
+      hide();
+      message.success('操作成功');
+      //刷新页面
+      actionRef.current?.reload();
+      return true;
+    } catch (error: any) {
+      hide();
+      message.error('操作失败' + error.message);
+      return false;
+    }
+  };
+
+  /**
+   *  下线接口
+   *
+   * @param record
+   */
+  const handleOffline = async (record: API.InterfaceInfo) => {
+    const hide = message.loading('正在删除');
+    if (!record) return true;
+    try {
+      await offlineInterfaceInfoUsingPOST({
+        id: record.id,
+      });
+      hide();
+      message.success('操作成功');
+      //刷新页面
+      actionRef.current?.reload();
+      return true;
+    } catch (error: any) {
+      hide();
+      message.error('操作失败' + error.message);
+      return false;
+    }
+  };
+
+  /**
    * @en-US International configuration
    * @zh-CN 国际化配置
    * */
@@ -192,14 +241,38 @@ const TableList: React.FC = () => {
         >
           <FormattedMessage id="pages.searchTable.update" defaultMessage="Configuration" />
         </a>,
-        <a
+        record.status === 0 ? (
+          <a
+            key="config"
+            onClick={() => {
+              handleOnline(record);
+            }}
+          >
+            发布
+          </a>
+        ) : null,
+        record.status === 1 ? (
+          <Button
+            type="text"
+            danger
+            key="config"
+            onClick={() => {
+              handleOffline(record);
+            }}
+          >
+            下线
+          </Button>
+        ) : null,
+        <Button
+          type="text"
+          danger
           key="config"
           onClick={() => {
             handleRemove(record);
           }}
         >
           <FormattedMessage id="pages.searchTable.delete" defaultMessage="Configuration" />
-        </a>,
+        </Button>,
       ],
     },
   ];
@@ -227,9 +300,7 @@ const TableList: React.FC = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={async (
-          params,
-        ) => {
+        request={async (params) => {
           const res: any = await listInterfaceInfoByPageUsingGET({
             ...params,
           });
