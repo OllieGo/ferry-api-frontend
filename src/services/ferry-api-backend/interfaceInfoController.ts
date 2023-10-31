@@ -4,8 +4,22 @@ import { request } from '@umijs/max';
 
 /** addInterfaceInfo POST /api/interfaceInfo/add */
 export async function addInterfaceInfoUsingPOST(
-  body: API.InterfaceInfoAddRequest,
-  options?: { [key: string]: any },
+  body: {
+    method?: string;
+    isDelete?: number;
+    responseHeader?: string;
+    description?: string;
+    requestParams?: string;
+    updateTime?: string;
+    userId?: number;
+    url?: string;
+    createTime?: string;
+    name?: string;
+    requestHeader?: string;
+    id?: number;
+    status?: number;
+  },
+  options?: { [p: string]: any },
 ) {
   return request<API.BaseResponselong>('/api/interfaceInfo/add', {
     method: 'POST',
@@ -79,8 +93,8 @@ export async function listInterfaceInfoByPageUsingGET(
 
 /** offlineInterfaceInfo POST /api/interfaceInfo/offline */
 export async function offlineInterfaceInfoUsingPOST(
-  body: API.RestIdParam,
-  options?: { [key: string]: any },
+  body: { id: number | undefined },
+  options?: { [p: string]: any },
 ) {
   return request<API.BaseResponseboolean>('/api/interfaceInfo/offline', {
     method: 'POST',
@@ -94,8 +108,8 @@ export async function offlineInterfaceInfoUsingPOST(
 
 /** onlineInterfaceInfo POST /api/interfaceInfo/online */
 export async function onlineInterfaceInfoUsingPOST(
-  body: API.RestIdParam,
-  options?: { [key: string]: any },
+  body: { id: number | undefined },
+  options?: { [p: string]: any },
 ) {
   return request<API.BaseResponseboolean>('/api/interfaceInfo/online', {
     method: 'POST',
